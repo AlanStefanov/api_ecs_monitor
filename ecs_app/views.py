@@ -2,6 +2,8 @@ from django.shortcuts import render
 from botocore.exceptions import ClientError
 
 import boto3
+from django.http import JsonResponse
+
 
 def list_clusters(request):
     ecs_client = boto3.client('ecs')
