@@ -1,0 +1,6 @@
+Django==3.2.12
+boto3<=1.15.3
+awscli==1.22.77
+python-decouple==3.5
+gunicorn==21.2.0
+PyYAML==5.4.1

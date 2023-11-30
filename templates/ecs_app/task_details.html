@@ -1,0 +1,21 @@
+<!-- ecs_app/task_details.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task Details in AWS ECS</title>
+</head>
+<body>
+    <h1>Task Details in AWS ECS</h1>
+
+    {% if task %}
+        <p>Task Name: {{ task.task_arn }}</p>
+        <p>Last Status: {{ task.last_status }}</p>
+        <p>Started At: {{ task.started_at }}</p>
+    {% elif error %}
+        <p>Error: {{ error }}</p>
+    {% else %}
+        <p>No task details available.</p>
+    {% endif %}
+</body>
+</html>

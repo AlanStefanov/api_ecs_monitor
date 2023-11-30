@@ -1,0 +1,35 @@
+<!-- ecs_app/services_list.html -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Services List in AWS ECS</title>
+</head>
+<body>
+    <h1>Services List in AWS ECS</h1>
+
+    {% for service in services %}
+        <h2>{{ service.service_name }}</h2>
+        <p>Service ARN: {{ service.service_arn }}</p>
+
+        {% if service.tasks %}
+            <h3>Tasks</h3>
+            <ul>
+                {% for task in service.tasks %}
+                    <li>
+                        Task ARN: {{ task.task_arn }} <br>
+                        Last Status: {{ task.last_status }} <br>
+                        Started At: {{ task.started_at }} <br>
+
+                        
+                        {{ task|pprint }}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No tasks found for this service.</p>
+        {% endif %}
+
+    {% endfor %}
+</body>
+</html>
