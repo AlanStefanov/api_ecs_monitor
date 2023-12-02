@@ -34,21 +34,6 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=Csv())
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-from django.http import JsonResponse
-
-def my_aws_function(request):
-    ecs_client = boto3.client(
-        'ecs',
-        aws_access_key_id=AWS_ACCESS_KEY_ID,
-        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-        region_name=AWS_DEFAULT_REGION
-    )
-
-    # Obtener la lista de clusters
-    clusters = ecs_client.list_clusters()['clusterArns']
-
-    return JsonResponse({'clusters': clusters})
-
 INSTALLED_APPS = [
     'django.contrib.admin',  
     'django.contrib.auth',

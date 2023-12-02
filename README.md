@@ -36,6 +36,9 @@ Instala las dependencias:
 
     pip install -r requirements.txt
 
+
+------------------------------
+
 Migraciones de la Base de Datos
 
 Realiza las migraciones de la base de datos con los siguientes comandos:
@@ -45,30 +48,41 @@ Realiza las migraciones de la base de datos con los siguientes comandos:
 python manage.py makemigrations
 python manage.py migrate
 
-Iniciar el Servidor
+------------------------------
 
 Inicia el servidor con el siguiente comando:
-
 
 
 python manage.py runserver
 
 El servidor estará disponible en http://localhost:8000/.
-Endpoints
+
+*Endpoints*
+
 Listar Clusters
 
-    URL: /list_clusters/
+    URL: ecs_app/list_clusters/
     Método: GET
     Descripción: [Lista todos los clusters en la zona indicada en el archivo de variables de entorno]
 
-Listar Servicios
+Listar Servicios por Cluster
 
-    URL: /list_services/<str:cluster_name>/
+    URL: ecs_app/list_services/<str:cluster_name>/
     Método: GET
     Descripción: [Muestra todos los servicios de un determinado cluster en AWS ECS]
+    Ejemplo: http://127.0.0.1:8000/ecs_app/list_services/farmu-platform-dev
 
 Listar Tareas
 
-    URL: /list_tasks/<str:cluster_name>/<str:task_arn>/
+    URL: ecs_app/list_tasks/<str:cluster_name>/<str:task_id>/
+    Método: GET
+    Descripción: [Devuelve toda la información de la tarea seleccion de determinado servicio por su id]
+    Ejemplo: http://127.0.0.1:8000/ecs_app/list_task/farmu-platform-dev/<id>
+
+
+Listar Tarea especifica por nombre
+
+    URL: ecs_app/list_tasks_for_service/<str:cluster_name>/<str:service_namen>/
     Método: GET
     Descripción: [Devuelve toda la información de la tarea seleccion de determinado servicio]
+    Ejemplo: http://127.0.0.1:8000/ecs_app/list_tasks_for_service/farmu-platform-dev/co-front-account-dev0/
