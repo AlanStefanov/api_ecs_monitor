@@ -1,10 +1,7 @@
 import os
-from pathlib import Path
 import boto3
 from decouple import config, Csv
-
 from pathlib import Path
-import os
 from dotenv import load_dotenv
 
 # Obtén la ruta al directorio padre de este archivo (settings.py)

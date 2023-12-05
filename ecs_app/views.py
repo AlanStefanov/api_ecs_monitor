@@ -1,35 +1,65 @@
 from django.shortcuts import render
 from botocore.exceptions import ClientError
-
 import boto3
 from django.http import JsonResponse
+from .utils import extract_last_hash
+import subprocess
 
+import json
+from django.contrib.auth import authenticate, login, logout
+from django.views.decorators.csrf import csrf_exempt
+
+# Gestion de usuarios
+
+@csrf_exempt  
+@csrf_exempt
+def user_login(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+
+        username = data.get('username')
+        password = data.get('password')
+        
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            login(request, user)
+            return JsonResponse({'success': True, 'message': 'Login exitoso'})
+        else:
+            return JsonResponse({'success': False, 'message': 'Credenciales inválidas'})
+    
+    return JsonResponse({'success': False, 'message': 'Método no permitido'})
+
+def user_logout(request):
+    if request.method == 'POST':
+        logout(request)
+        return JsonResponse({'success': True, 'message': 'Logout exitoso'})
+    
+    return JsonResponse({'success': False, 'message': 'Método no permitido'})
+
+
+
+#----------------------------
+#Vistas de la aplicacion ECS
+#Lista de cluster
 
 def list_clusters(request):
     ecs_client = boto3.client('ecs')
-    clusters = ecs_client.list_clusters()['clusterArns']
-    return JsonResponse({'clusters': clusters})
+    
+    try:
+        # Obtener la lista de clusters
+        response = ecs_client.list_clusters()
+        cluster_arns = response.get('clusterArns', [])
 
-def register(request):
-    if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('dashboard')  # Redirige a la página principal después del registro
-    else:
-        form = UserCreationForm()
+        # Extraer solo los nombres de los clusters
+        cluster_names = [arn.split('/')[1] for arn in cluster_arns]
 
-    return render(request, 'registration/register.html', {'form': form})
+        return JsonResponse({'clusters': cluster_names})
 
-def user_logout(request):
-    logout(request)
-    return redirect('login')  # Redirige a la página de inicio de sesión después del cierre de sesión
+    except Exception as e:
+        return JsonResponse({'error': str(e)})
 
-from django.shortcuts import render
-from botocore.exceptions import ClientError
-import boto3
-
+#Lista de servicios
 
 def list_services(request, cluster_name):
     # Configura el cliente de ECS
@@ -82,12 +112,10 @@ def list_services(request, cluster_name):
             # Agrega más información del servicio según sea necesario
         })
 
-    # Pasa la información a la plantilla para su representación
-    return render(request, 'ecs_app/services_list.html', {'services': service_info})
+    return JsonResponse({'services': service_info})
+    
 
-
-from django.shortcuts import render
-import boto3
+#Lista de tareas
 
 def list_tasks(request, cluster_name, task_arn):
     # Configura el cliente de ECS
@@ -105,17 +133,11 @@ def list_tasks(request, cluster_name, task_arn):
             # Agrega más información según sea necesario
         }
 
-        # Pasa la información a la plantilla para su representación
-        return render(request, 'ecs_app/task_details.html', {'task': task_info})
+        return JsonResponse({'task': task_info})
 
     except Exception as e:
-        # Si ocurre un error, muestra un mensaje de error
-        return render(request, 'ecs_app/task_details.html', {'error': str(e)})
+                return JsonResponse({'error': str(e)})
     
-import subprocess
-import json
-from django.http import JsonResponse
-from .utils import extract_last_hash
 
 def list_tasks_for_service(request, cluster_name, service_name):
     try:
@@ -137,14 +159,12 @@ def list_tasks_for_service(request, cluster_name, service_name):
 
             tasks_info.append(task_info)
 
-        # Pasa la información a la plantilla para su representación
         return JsonResponse({'tasks': tasks_info})
 
     except Exception as e:
-        # Si ocurre un error, muestra un mensaje de error
         return JsonResponse({'error': str(e)})
 
-
+#Describir tareas utilizando su id con mayor precision.
 def get_task_info_using_describe_tasks(cluster_name, task_id):
     try:
         # Obtener información detallada sobre la tarea utilizando describe-tasks
@@ -153,12 +173,10 @@ def get_task_info_using_describe_tasks(cluster_name, task_id):
         )
         task_info = json.loads(task_info_json)['tasks'][0]
 
-        # Formatear la información según sea necesario
         formatted_info = {
             'last_status': task_info['lastStatus'],
             'started_at': task_info['createdAt'],
             'task_id': task_id,
-            # Agregar más información según sea necesario
         }
 
         return formatted_info

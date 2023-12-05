@@ -86,3 +86,18 @@ Listar Tarea especifica por nombre
     Método: GET
     Descripción: [Devuelve toda la información de la tarea seleccion de determinado servicio]
     Ejemplo: http://127.0.0.1:8000/ecs_app/list_tasks_for_service/farmu-platform-dev/co-front-account-dev0/
+
+
+    ----
+
+Gestion de usuarios::
+
+Login:
+    URL: ecs_app/login
+    Método: POST
+    Descripción: [Se ingresa "user" y "password"]
+
+
+    URL: ecs_app/logout
+    Método: GET
+    Descripción: [Cierrra sesion y redirecciona al login]
