@@ -1,0 +1,20 @@
+{% extends "admin/base_site.html" %}
+
+{% block extrastyle %}
+    {{ block.super }}
+    <style>
+        /* Agrega estilos adicionales si es necesario */
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div id="content" class="flex">
+        <div id="content-main">
+            <form method="post" action="{% url 'admin:app_model_add' %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="Guardar">
+            </form>
+        </div>
+    </div>
+{% endblock %}

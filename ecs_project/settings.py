@@ -32,13 +32,14 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=Csv())
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 INSTALLED_APPS = [
+    'jazzmin',  
     'django.contrib.admin',  
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'corsheaders',  
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -59,9 +60,10 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/app/staticfiles/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 ROOT_URLCONF = 'ecs_project.urls'
 
@@ -69,7 +71,7 @@ ROOT_URLCONF = 'ecs_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  
+        'DIRS': [os.path.join(BASE_DIR, 'ecs_app', 'templates')], 
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -84,3 +86,22 @@ TEMPLATES = [
 
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
+CSRF_COOKIE_SECURE = True 
+CSRF_COOKIE_HTTPONLY = True
+CSRF_TRUSTED_ORIGINS = ['https://monitor.jenkins.farmuhub.co', 'https://ecs.farmuhub.co, http://localhost/']
+API_URL = os.getenv('API_URL')
+
+
+## Backoffice
+JAZZMIN_SETTINGS = {
+    'site_title': 'ECS Monitor',
+    'site_header': 'ECS Monitor Administration',
+    "welcome_sign": "ECS Monitor Administration",
+    'related_modal_active': False,
+    'show_ui_builder': True,
+    'changeform_format': 'horizontal_tabs',
+    'searchbar_position': 'header',
+    'show_sidebar': False,
+    'navigation_expanded': True,
+    'navigation_collapsed_default': False,
+}
